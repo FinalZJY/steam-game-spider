@@ -1,0 +1,34 @@
+{
+  "name": "steam",
+  "version": "1.0.0",
+  "description": "A nodejs script to fetching steam game info. The data will be saved as JSON files.",
+  "type": "module",
+  "main": "task.js",
+  "author": "FinalZJY",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 16"
+  },
+  "scripts": {
+    "app-list": "node src/appList.js",
+    "game-detail": "node src/gameDetail.js",
+    "city": "node src/city.js"
+  },
+  "bugs": {
+    "url": "https://github.com/FinalZJY/steam-game-spider/issues"
+  },
+  "homepage": "https://github.com/FinalZJY/steam-game-spider#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FinalZJY/steam-game-spider.git"
+  },
+  "dependencies": {
+    "steamapi": "latest"
+  },
+  "keywords": [
+    "Steam",
+    "spider",
+    "JSON",
+    "Node.js"
+  ]
+}
