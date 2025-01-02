@@ -15,3 +15,36 @@ export function readJSON(filename, defaultValue) {
     return defaultValue;
   }
 }
+
+export function writeJSONByChunks(filename, data, chunkSize) {
+  if (Array.isArray(data)) {
+    const jsonDir = filename.replace('.json', '');
+    if (!fs.existsSync(jsonDir)) {
+      fs.mkdirSync(jsonDir);
+    }
+    for (let index = 0; index < data.length / chunkSize; index++) {
+      const chunk = data.slice(index * chunkSize, (index + 1) * chunkSize);
+      writeJSON(path.join(jsonDir, `${index + 1}.json`), chunk);
+    }
+  } else {
+    throw new Error('Only arrays can be split into chunks.');
+  }
+}
+
+export function readJSONByChunks(filename, defaultValue) {
+  const jsonDir = filename.replace('.json', '');
+  if (!fs.existsSync(jsonDir)) {
+    return defaultValue;
+  }
+  let data = [];
+  fs.readdirSync(jsonDir).forEach(filename => {
+    const chunk = readJSON(path.join(jsonDir, filename));
+    if (Array.isArray(chunk)) {
+      data = data.concat(chunk);
+    }
+  });
+  if (data.length === 0) {
+    return defaultValue;
+  }
+  return data;
+}

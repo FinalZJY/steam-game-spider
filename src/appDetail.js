@@ -2,7 +2,13 @@ import SteamAPI from 'steamapi';
 import {readJSON, writeJSON} from './file.js';
 import {appListFile, chunkSize, dataDir, minSavingInterval, steamToken, tooManyRequestsInterval} from './config.js';
 import path from 'path';
+import {countdownInPlace} from './countdown.js';
+import fs from 'fs';
 
+const appDetailsDir = path.join(dataDir, 'AppDetails');
+if (!fs.existsSync(appDetailsDir)) {
+  fs.mkdirSync(appDetailsDir);
+}
 const steam = new SteamAPI(steamToken);
 const failed = [];
 let lastSavingTime = 0;
@@ -28,8 +34,7 @@ async function getGameDetails(app) {
     if (err.message === 'Failed to find app ID') {
       app.detail = {};
     } else if (err.message === 'Too Many Requests') {
-      console.debug(`Waiting ${tooManyRequestsInterval / 1000}s.`);
-      await new Promise(resolve => setTimeout(resolve, tooManyRequestsInterval));
+      await countdownInPlace(tooManyRequestsInterval);
       return getGameDetails(app);
     }
   }
@@ -37,7 +42,7 @@ async function getGameDetails(app) {
 
 async function update() {
   for (let chunkIndex = 0; chunkIndex <= apps.length / chunkSize; chunkIndex++) {
-    const filename = path.join(dataDir, `game_${chunkIndex + 1}.json`);
+    const filename = path.join(appDetailsDir, `app_${chunkIndex + 1}.json`);
     const start = chunkIndex * chunkSize;
     const end = start + chunkSize;
     const chunkApps = readJSON(filename, apps.slice(start, end));
@@ -47,7 +52,7 @@ async function update() {
       if (app.name && !app.detail) {
         await getGameDetails(app);
       }
-      if (Date.now() > lastSavingTime + minSavingInterval && index % 100 === 0) {
+      if (Date.now() > lastSavingTime + minSavingInterval) {
         save(filename, chunkApps, start + index);
       }
     }

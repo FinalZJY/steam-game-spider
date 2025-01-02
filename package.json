@@ -7,11 +7,12 @@
   "author": "FinalZJY",
   "license": "MIT",
   "engines": {
-    "node": ">= 16"
+    "node": ">= 18"
   },
   "scripts": {
     "app-list": "node src/appList.js",
-    "game-detail": "node src/gameDetail.js",
+    "game-detail": "node src/appDetail.js",
+    "game-review": "node src/appReview.js",
     "city": "node src/city.js"
   },
   "bugs": {

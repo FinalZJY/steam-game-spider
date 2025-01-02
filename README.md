@@ -339,6 +339,8 @@ Fields of the data:
 
 > **Why some apps have no detail:** See [Failed to find app ID](#Failed-to-find-app-ID).
 
+> Requests for this API are limited to 200 every 5 minutes. See [Too Many Requests](#Too-Many-Requests).
+
 ### Fetch city list.
 
 ```sh
@@ -411,14 +413,14 @@ The request url be like: `https://api.steampowered.com/ISteamUserStats/GetNumber
 ### Steam Store API
 The apis requested on Steam store pages.
 They are not official open apis, so there's no doc of these apis.
-It includes game detail, featured games apis.
+It includes game detail, game reviews apis.
 
 The request url be like: `https://store.steampowered.com/api/appdetails?appids=1473740`
 
 ### Steam Community API
 The apis requested on Steam community pages.
 They are not official open apis, so there's no doc of these apis.
-It includes game comments, location list.
+It includes community actions, location list.
 
 The request url be like: `https://steamcommunity.com/actions/QueryLocations/US/FL`
 
