@@ -51,12 +51,13 @@ I guess these apps were created by Steam or publishers for testing purpose.
 npm run game-detail
 ```
 
-The data will be saved in `./data/game_${index}.json`, such as `./data/game_1.json`. You will find files in `./data/` like:
+The data will be saved in `./data/AppDetails/game_${index}.json`, such as `./data/AppDetails/game_1.json`. You will find files in `./data/` like:
 ```
 - data/
-  - game_1.json
-  - game_2.json
-  - game_3.json
+  - AppDetails/
+    - game_1.json
+    - game_2.json
+    - game_3.json
 ```
 
 > **Why should the data be divided into chunks:**
@@ -394,8 +395,64 @@ You will find some apps' name are `""`, or like `"test2"`.
 Usually, you can not find the game detail page in Steam Store.
 I guess these apps were created by Steam or publishers for testing purpose.
 
-### Fetch all comments for all games.
-TODO
+### Fetch all reviews for all games.
+**It will task at least 80 hours and more than 100GB storage space.**
+
+```sh
+npm run game-review
+```
+
+The data will be saved in `./data/AppReviews/${appid}.json`, such as `./data/AppReviews/99610.json`. You will find files in `./data/` like:
+```
+- data/
+  - AppReviews/
+    - 99610.json
+    - 99611.json
+    - 221100/
+      - 1.json
+      - 2.json
+```
+
+Some JSON will be divided into chunks. The data will be saved in `./data/AppReviews/${appid}/`.
+
+> **Why should the data be divided into chunks:**
+> A file that is too large can not be read/write at once because it exceeds the maximum length of a JavaScript string.
+> Also, it will take too much time to serialize for large JSON.
+
+The data structure of `${appid}.json` may be like:
+```json
+[
+  {
+    "recommendationid": "179292565",
+    "author": {
+      "steamid": "76561198080337503",
+      "num_games_owned": 716,
+      "num_reviews": 470,
+      "playtime_forever": 0,
+      "playtime_last_two_weeks": 0,
+      "last_played": 0
+    },
+    "language": "english",
+    "review": "not worth full price for the content it adds",
+    "timestamp_created": 1731921250,
+    "timestamp_updated": 1731921250,
+    "voted_up": false,
+    "votes_up": 0,
+    "votes_funny": 0,
+    "weighted_vote_score": 0,
+    "comment_count": 0,
+    "steam_purchase": false,
+    "received_for_free": false,
+    "written_during_early_access": false,
+    "primarily_steam_deck": false
+  }
+]
+```
+
+You can find the description of these fields [here](https://partner.steamgames.com/doc/store/getreviews).
+
+> Requests for this API are limited to 10 every second . See [Too Many Requests](#Too-Many-Requests).
+
 
 ## Data source
 This script will only fetch data from Steam Network directly.
@@ -403,7 +460,8 @@ But Steam has 3 different kind of apis I can find that with different structures
 
 ### Steam Web API
 [Steam Web API](https://developer.valvesoftware.com/wiki/Steam_Web_API) is the official apis provided by Valve Corporation. 
-It includes almost all apis, but no game detail, featured games, game comments.
+All api definitions can be found in [Steamworks](https://partner.steamgames.com/doc/webapi).
+It includes almost all known apis, but no game details, featured games, game comments.
 
 You can also search the apis in this 3-party website: https://steamapi.xpaw.me
 
@@ -435,3 +493,8 @@ You can ignore this error if you don't care about these apps/games.
 It often occurs when you are fetching from Steam Store API.
 If you send http requests too frequently, it will return status code 429(Too Many Requests).
 Waiting for a second, it will continue fetching automatically.
+
+### Error fetching reviews for ${appid}. Retrieving ${fetched_reviews}/${total_reviews} reviews.
+Sometimes the api will return the end(response cursor == request cursor) of a game's reviews even though the fetched reviews are less than the total_reviews.
+These data will not be saved to files because they may be incorrect.
+In this case, you can try again later.

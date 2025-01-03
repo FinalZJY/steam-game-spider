@@ -44,7 +44,7 @@ async function getAppReviews(appid, updateProgress) {
     }
   }
 
-  if (reviews.length >= summary.total_reviews * 0.99 && duplicationCheck(reviews)) {
+  if (reviews.length >= summary.total_reviews * 0.95 && duplicationCheck(reviews)) {
     return reviews;
   } else {
     throw new Error(`Error fetching reviews for ${appid}. Retrieving ${reviews.length}/${summary.total_reviews} reviews.`);
@@ -71,7 +71,8 @@ async function update() {
   updateTotalProgress(0);
   await runParallelTask(apps.map(app => async () => {
     const filename = path.join(appReviewsDir, `${app.appid}.json`);
-    if (!fs.existsSync(filename)) {
+    const chunkDir = path.join(appReviewsDir, String(app.appid));
+    if (!fs.existsSync(filename) && !fs.existsSync(chunkDir)) {
       const { updateProgress, finish } = logMultiLineProgress(`Fetching ${app.appid} reviews... `);
       updateProgress('');
       updateTotalProgress((finished / apps.length * 100).toFixed(2));
