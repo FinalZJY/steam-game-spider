@@ -7,7 +7,7 @@ export const appListFile = path.join(dataDir, 'app_list.json');
 // Key to use for API calls. Key can be generated at https://steamcommunity.com/dev/apikey
 export const steamToken = 'steam token';
 
-export const chunkSize = 20000;
+export const appListChunkSize = 20000;
 
 export const minSavingInterval = 10 * 1000; // 10s
 

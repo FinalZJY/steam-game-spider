@@ -10,9 +10,9 @@
     "node": ">= 18"
   },
   "scripts": {
-    "app-list": "node src/appList.js",
-    "game-detail": "node src/appDetail.js",
-    "game-review": "node src/appReview.js",
+    "app-list": "node src/index.js appList",
+    "game-detail": "node src/index.js appDetail",
+    "game-review": "node src/index.js appReview",
     "city": "node src/city.js"
   },
   "bugs": {

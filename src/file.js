@@ -48,3 +48,28 @@ export function readJSONByChunks(filename, defaultValue) {
   }
   return data;
 }
+
+export function getProgress(filename, defaultValue) {
+  const jsonDir = filename.replace('.json', '');
+  const tempDir = jsonDir + '_temp';
+  if (!fs.existsSync(tempDir)) {
+    return defaultValue;
+  }
+  return readJSON(path.join(tempDir, 'progress.json'), {});
+}
+
+export function appendChunk(filename, data, progress) {
+  const jsonDir = filename.replace('.json', '');
+  const tempDir = jsonDir + '_temp';
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+  }
+  const chunks = fs.readdirSync(tempDir).filter(filename => filename === 'progress.json');
+  writeJSON(path.join(tempDir, `${chunks.length + 1}.json`), data);
+  if (progress) {
+    writeJSON(path.join(tempDir, 'progress.json'), progress);
+  } else {
+    fs.rmSync(path.join(tempDir, 'progress.json'));
+    fs.renameSync(tempDir, jsonDir);
+  }
+}
