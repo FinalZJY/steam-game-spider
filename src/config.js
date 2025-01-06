@@ -11,7 +11,7 @@ export const appListChunkSize = 20000;
 
 export const minSavingInterval = 10 * 1000; // 10s
 
-export const tooManyRequestsInterval = 4 * 60; // 4 min
+export const tooManyRequestsInterval = 5 * 60; // 5 min
 
 export const maxReviewsPerFile = 350000; // A large JSON can not use JSON.stringify or JSON.parse.
 

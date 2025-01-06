@@ -15,9 +15,9 @@ async function getAppReviews(appid, updateProgress) {
   const progress = getProgress(filename, {
     existReviewLength: 0,
     cursor: '*',
+    totalReviews: undefined,
   });
 
-  let total_reviews;
   let reviews = [];
   for (let cursor = progress.cursor; Boolean(cursor);) {
     const resp = await getReviews({
@@ -33,17 +33,17 @@ async function getAppReviews(appid, updateProgress) {
     });
     if (!resp.success) {
       throw new Error(`Error fetching reviews for ${appid}.`);
-    } else if (!resp.cursor && (progress.existReviewLength + reviews.length) < total_reviews) {
+    } else if (!resp.cursor && (progress.existReviewLength + reviews.length) < progress.totalReviews) {
       // Sometimes resp.cursor is null, but it will return normal data if you fetch again.
-      updateProgress(`${progress.existReviewLength + reviews.length}/${total_reviews ?? '?'} retrying`);
+      updateProgress(`${progress.existReviewLength + reviews.length}/${progress.totalReviews ?? '?'} retrying`);
       continue;
     }
 
     reviews.push(...resp.reviews);
-    if (!total_reviews) {
-      total_reviews = resp.query_summary?.total_reviews;
+    if (!progress.totalReviews) {
+      progress.totalReviews = resp.query_summary?.total_reviews;
     }
-    updateProgress(`${progress.existReviewLength + reviews.length}/${total_reviews ?? '?'}`);
+    updateProgress(`${progress.existReviewLength + reviews.length}/${progress.totalReviews ?? '?'}`);
     if (cursor === resp.cursor) {
       break;
     } else {
@@ -58,7 +58,7 @@ async function getAppReviews(appid, updateProgress) {
     }
   }
 
-  if (progress.existReviewLength + reviews.length >= total_reviews * 0.95) {
+  if (progress.existReviewLength + reviews.length >= progress.totalReviews * 0.95) {
     if (progress.existReviewLength > 0) {
       appendChunk(filename, reviews);
     } else {
@@ -66,7 +66,7 @@ async function getAppReviews(appid, updateProgress) {
     }
     return reviews;
   } else {
-    throw new Error(`Error fetching reviews for ${appid}. Retrieving ${reviews.length}/${total_reviews} reviews.`);
+    throw new Error(`Error fetching reviews for ${appid}. Retrieving ${reviews.length}/${progress.totalReviews} reviews.`);
   }
 }
 
