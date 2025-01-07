@@ -64,7 +64,7 @@ export function appendChunk(filename, data, progress) {
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir);
   }
-  const chunks = fs.readdirSync(tempDir).filter(filename => filename === 'progress.json');
+  const chunks = fs.readdirSync(tempDir).filter(filename => filename !== 'progress.json');
   writeJSON(path.join(tempDir, `${chunks.length + 1}.json`), data);
   if (progress) {
     writeJSON(path.join(tempDir, 'progress.json'), progress);
