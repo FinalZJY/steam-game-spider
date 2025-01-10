@@ -43,6 +43,7 @@ export function logMultiLineProgress(prefix = '', suffix = '', currentLine = fal
   const finish = (text = '') => {
     if (!currentLine) {
       readline.moveCursor(process.stdout, 0, -lines.length);
+      readline.clearLine(process.stdout, 0);
       readline.cursorTo(process.stdout, 0);
       process.stdout.write(`${text}\n`);
       readline.moveCursor(process.stdout, 0, lines.length);

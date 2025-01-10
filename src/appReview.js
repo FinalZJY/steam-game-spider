@@ -39,6 +39,13 @@ async function getAppReviews(appid, updateProgress) {
       continue;
     }
 
+    if (reviews.length + resp.reviews?.length > maxReviewsPerFile) {
+      progress.cursor = cursor;
+      progress.existReviewLength += reviews.length;
+      appendChunk(filename, reviews, progress);
+      reviews = [];
+    }
+
     reviews.push(...resp.reviews);
     if (!progress.totalReviews) {
       progress.totalReviews = resp.query_summary?.total_reviews;
@@ -48,13 +55,6 @@ async function getAppReviews(appid, updateProgress) {
       break;
     } else {
       cursor = resp.cursor;
-    }
-
-    if (reviews.length > maxReviewsPerFile) {
-      progress.cursor = cursor;
-      progress.existReviewLength += maxReviewsPerFile;
-      appendChunk(filename, reviews.slice(0, maxReviewsPerFile), progress);
-      reviews = reviews.slice(maxReviewsPerFile, reviews.length);
     }
   }
 
